@@ -17,35 +17,44 @@ import org.junit.runner.RunWith;
 import javax.jms.*;
 
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
 
 @RunWith(FrameworkRunner.class)
 @CreateLdapServer(transports = {
-    @CreateTransport(protocol = "LDAP", port = 1024) })
-@ApplyLdifFiles("org/fuse/usecase/activemq2.ldif")
+        @CreateTransport(protocol = "LDAP", port = 1024) })
+@ApplyLdifFiles("org/fuse/usecase/activemq.ldif")
 public class LDAPActiveMQTest extends AbstractLdapTestUnit {
 
     public BrokerService broker;
     public static LdapServer ldapServer;
 
-    @Before
-    public void setup() throws Exception {
+    @Before public void setup() throws Exception {
         System.setProperty("ldapPort", String.valueOf(getLdapServer().getPort()));
         broker = BrokerFactory.createBroker("xbean:org/fuse/usecase/activemq-broker.xml");
         broker.start();
         broker.waitUntilStarted();
     }
 
-    @After
-    public void shutdown() throws Exception {
+    @After public void shutdown() throws Exception {
         broker.stop();
         broker.waitUntilStopped();
     }
 
+    @Test public void testFailCreateSessionNotEnoughRights() throws Exception {
+        ActiveMQConnectionFactory factory = new ActiveMQConnectionFactory("vm://localhost");
+        try {
+            Connection conn = factory.createQueueConnection("jdoe", "sunflower");
+            fail("Expected JMSException");
+        } catch (JMSException expected) {
+            //fail("User jdoe is not authorized to create: topic://ActiveMQ.Advisory.Connection");
+        }
+    }
+
     @Test
     public void testCreateQueuePublishConsume() throws Exception {
-        ActiveMQConnectionFactory factory = new ActiveMQConnectionFactory("vm://localhost?jms.watchTopicAdvisories=false");
-        Connection conn = factory.createQueueConnection("jdoe", "sunflower");
+        ActiveMQConnectionFactory factory = new ActiveMQConnectionFactory("vm://localhost");
         try {
+            Connection conn = factory.createQueueConnection("admin", "sunflower");
             Session sess = conn.createSession(false, Session.AUTO_ACKNOWLEDGE);
             conn.start();
             Queue queue = sess.createQueue("TEST.FOO");
@@ -58,7 +67,6 @@ public class LDAPActiveMQTest extends AbstractLdapTestUnit {
             assertNotNull(msg);
         } catch (Exception e) {
             e.printStackTrace();
-            return;
         }
     }
 

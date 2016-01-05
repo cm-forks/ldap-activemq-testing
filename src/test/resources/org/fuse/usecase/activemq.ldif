@@ -15,17 +15,9 @@
 ## limitations under the License.
 ## ---------------------------------------------------------------------------
 
-version: 1
-
 ##########################
 ## Define basic objects ##
 ##########################
-
-# Uncomment if adding to open ldap
-#dn: ou=system
-#objectclass: organizationalUnit
-#objectclass: top
-#ou: system
 
 dn: ou=ActiveMQ,ou=system
 objectClass: organizationalUnit
@@ -42,15 +34,13 @@ cn: mqbroker
 objectClass: organizationalRole
 objectClass: top
 objectClass: simpleSecurityObject
-# userPassword: {SSHA}YvMAkkd66cDecNoejo8jnw5uUUBziyl0
-userPassword: {SSHA}5en6G6MezRroT3XKqkdPOmY/BfQ=
+userPassword: {SSHA}YvMAkkd66cDecNoejo8jnw5uUUBziyl0
 description: Bind user for MQ broker
 
 
 ###################
 ## Define groups ##
 ###################
-
 
 dn: ou=Group,ou=ActiveMQ,ou=system
 objectClass: organizationalUnit
@@ -74,7 +64,6 @@ objectClass: top
 ## Define users ##
 ##################
 
-
 dn: ou=User,ou=ActiveMQ,ou=system
 objectClass: organizationalUnit
 objectClass: top
@@ -82,22 +71,14 @@ ou: User
 
 dn: uid=admin,ou=User,ou=ActiveMQ,ou=system
 uid: admin
-# userPassword: {SSHA}YvMAkkd66cDecNoejo8jnw5uUUBziyl0
-userPassword: {SSHA}5en6G6MezRroT3XKqkdPOmY/BfQ=
+userPassword: {SSHA}YvMAkkd66cDecNoejo8jnw5uUUBziyl0
 objectClass: account
 objectClass: simpleSecurityObject
 objectClass: top
 
-
 dn: uid=jdoe,ou=User,ou=ActiveMQ,ou=system
 uid: jdoe
-
-# sunflower password
-# userPassword: {SSHA}YvMAkkd66cDecNoejo8jnw5uUUBziyl0
-
-# secret password
-userPassword: {SSHA}5en6G6MezRroT3XKqkdPOmY/BfQ=
-
+userPassword: {SSHA}YvMAkkd66cDecNoejo8jnw5uUUBziyl0
 objectclass: inetOrgPerson
 objectclass: organizationalPerson
 objectclass: person
@@ -155,15 +136,16 @@ objectClass: top
 member: cn=users
 member: cn=admins
 
-## TEST.BAR
 
-dn: cn=TEST.BAR,ou=Topic,ou=Destination,ou=ActiveMQ,ou=system
-cn: TEST.BAR
-description: A topic
+## FOO.>
+
+dn: cn=FOO.$,ou=Queue,ou=Destination,ou=ActiveMQ,ou=system
+cn: FOO.$
+description: A queue
 objectClass: applicationProcess
 objectClass: top
 
-dn: cn=admin,cn=TEST.BAR,ou=Topic,ou=Destination,ou=ActiveMQ,ou=system
+dn: cn=admin,cn=FOO.$,ou=Queue,ou=Destination,ou=ActiveMQ,ou=system
 cn: admin
 description: Admin privilege group, members are roles
 member: cn=admins
@@ -171,20 +153,50 @@ member: cn=users
 objectClass: groupOfNames
 objectClass: top
 
-dn: cn=read,cn=TEST.BAR,ou=Topic,ou=Destination,ou=ActiveMQ,ou=system
+dn: cn=read,cn=FOO.$,ou=Queue,ou=Destination,ou=ActiveMQ,ou=system
 cn: read
 member: cn=users
 member: cn=admins
 objectClass: groupOfNames
 objectClass: top
 
-dn: cn=write,cn=TEST.BAR,ou=Topic,ou=Destination,ou=ActiveMQ,ou=system
+dn: cn=write,cn=FOO.$,ou=Queue,ou=Destination,ou=ActiveMQ,ou=system
 cn: write
 objectClass: groupOfNames
 objectClass: top
 member: cn=users
 member: cn=admins
 
+
+## BAR.*
+
+dn: cn=BAR.*,ou=Queue,ou=Destination,ou=ActiveMQ,ou=system
+cn: BAR.*
+description: A queue
+objectClass: applicationProcess
+objectClass: top
+
+dn: cn=admin,cn=BAR.*,ou=Queue,ou=Destination,ou=ActiveMQ,ou=system
+cn: admin
+description: Admin privilege group, members are roles
+member: cn=admins
+member: cn=users
+objectClass: groupOfNames
+objectClass: top
+
+dn: cn=read,cn=BAR.*,ou=Queue,ou=Destination,ou=ActiveMQ,ou=system
+cn: read
+member: cn=users
+member: cn=admins
+objectClass: groupOfNames
+objectClass: top
+
+dn: cn=write,cn=BAR.*,ou=Queue,ou=Destination,ou=ActiveMQ,ou=system
+cn: write
+objectClass: groupOfNames
+objectClass: top
+member: cn=users
+member: cn=admins
 
 #######################
 ## Define advisories ##
@@ -221,30 +233,28 @@ objectClass: top
 ## Define temporary ##
 ######################
 
-dn: cn=ActiveMQ.Temp,ou=Topic,ou=Destination,ou=ActiveMQ,ou=system
-cn: ActiveMQ.Temp
-objectClass: applicationProcess
+dn: ou=Temp,ou=Destination,ou=ActiveMQ,ou=system
+objectClass: organizationalUnit
 objectClass: top
-description: Temporary destinations
+ou: Temp
 
-dn: cn=read,cn=ActiveMQ.Temp,ou=Topic,ou=Destination,ou=ActiveMQ,ou=system
+dn: cn=read,ou=Temp,ou=Destination,ou=ActiveMQ,ou=system
 cn: read
 member: cn=admins
 member: cn=users
 objectClass: groupOfNames
 objectClass: top
 
-dn: cn=write,cn=ActiveMQ.Temp,ou=Topic,ou=Destination,ou=ActiveMQ,ou=system
+dn: cn=write,ou=Temp,ou=Destination,ou=ActiveMQ,ou=system
 cn: write
 member: cn=admins
 member: cn=users
 objectClass: groupOfNames
 objectClass: top
 
-dn: cn=admin,cn=ActiveMQ.Temp,ou=Topic,ou=Destination,ou=ActiveMQ,ou=system
+dn: cn=admin,ou=Temp,ou=Destination,ou=ActiveMQ,ou=system
 cn: admin
 member: cn=admins
 member: cn=users
 objectClass: groupOfNames
 objectClass: top
-
