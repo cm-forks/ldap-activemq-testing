@@ -16,13 +16,23 @@
                 <map>
                     <cachedLDAPAuthorizationMap
                         connectionURL="ldap://localhost:1024"
+                        queueSearchBase="ou=Queue,ou=Destination,ou=ActiveMQ,ou=system"
+                        topicSearchBase="ou=Topic,ou=Destination,ou=ActiveMQ,ou=system"
+                        tempSearchBase="ou=Temp,ou=Destination,ou=ActiveMQ,ou=system"
+                        legacyGroupMapping="true"
+                    />
+                    <!--
+                        connectionURL="ldap://localhost:1024"
                         connectionUsername="uid=admin,ou=system"
                         connectionPassword="secret"
                         queueSearchBase="ou=Queue,ou=Destination,ou=ActiveMQ,ou=system"
                         topicSearchBase="ou=Topic,ou=Destination,ou=ActiveMQ,ou=system"
                         tempSearchBase="ou=Temp,ou=Destination,ou=ActiveMQ,ou=system"
-                        legacyGroupMapping="false"
-                    />
+                        adminPermissionGroupSearchFilter="(cn=admin)"
+                        writePermissionGroupSearchFilter="(cn=write)"
+                        readPermissionGroupSearchFilter="(cn=read)"
+                        legacyGroupMapping="true"
+                        -->
                 </map>
             </authorizationPlugin>
         </plugins>

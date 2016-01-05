@@ -38,13 +38,13 @@ public class LDAPCheckPasswordTest extends AbstractLdapTestUnit {
     public void testSearchAllAttrs() throws Exception {
         String userDn = "uid=admin,ou=User,ou=ActiveMQ,ou=system";
 
-        LdapConnection connection = IntegrationUtils.getNetworkConnectionAs("127.0.0.1",getLdapServer().getPort(),userDn,"secret");
+        LdapConnection connection = IntegrationUtils.getNetworkConnectionAs("127.0.0.1",getLdapServer().getPort(),userDn,"sunflower");
 
         Entry entry = connection.lookup(userDn);
         // performAdminAccountChecks(entry);
         Attribute attrPwd = entry.get("userPassword");
         String ldapPwd = attrPwd.get().getString();
-        String pwdHashed = hashSSHAPassword("secret");
+        String pwdHashed = hashSSHAPassword("sunflower");
 
         assertEquals(ldapPwd,pwdHashed);
         connection.close();

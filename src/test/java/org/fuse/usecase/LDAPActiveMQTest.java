@@ -16,6 +16,7 @@ import org.junit.runner.RunWith;
 
 import javax.jms.*;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
@@ -40,13 +41,17 @@ public class LDAPActiveMQTest extends AbstractLdapTestUnit {
         broker.waitUntilStopped();
     }
 
-    @Test public void testFailCreateSessionNotEnoughRights() throws Exception {
+    @Test
+    public void testFailCreateSessionNotEnoughRight() throws Exception {
         ActiveMQConnectionFactory factory = new ActiveMQConnectionFactory("vm://localhost");
         try {
-            Connection conn = factory.createQueueConnection("jdoe", "sunflower");
-            fail("Expected JMSException");
-        } catch (JMSException expected) {
-            //fail("User jdoe is not authorized to create: topic://ActiveMQ.Advisory.Connection");
+            Connection conn = factory.createQueueConnection("cibsen", "camel");
+            Session sess = conn.createSession(false, Session.AUTO_ACKNOWLEDGE);
+            conn.start();
+            fail("Expected Exception");
+        } catch (Exception e) {
+            assertEquals("User name [cibsen] or password is invalid.",e.getMessage());
+            return;
         }
     }
 
@@ -54,7 +59,7 @@ public class LDAPActiveMQTest extends AbstractLdapTestUnit {
     public void testCreateQueuePublishConsume() throws Exception {
         ActiveMQConnectionFactory factory = new ActiveMQConnectionFactory("vm://localhost");
         try {
-            Connection conn = factory.createQueueConnection("admin", "sunflower");
+            Connection conn = factory.createQueueConnection("jdoe", "sunflower");
             Session sess = conn.createSession(false, Session.AUTO_ACKNOWLEDGE);
             conn.start();
             Queue queue = sess.createQueue("TEST.FOO");
@@ -67,6 +72,23 @@ public class LDAPActiveMQTest extends AbstractLdapTestUnit {
             assertNotNull(msg);
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void testFailCreateQueuePublishConsume() throws Exception {
+        ActiveMQConnectionFactory factory = new ActiveMQConnectionFactory("vm://localhost");
+        try {
+            Connection conn = factory.createQueueConnection("jdoe", "sunflower");
+            Session sess = conn.createSession(false, Session.AUTO_ACKNOWLEDGE);
+            conn.start();
+            Queue queue = sess.createQueue("TEST.FOOOO");
+
+            MessageProducer producer = sess.createProducer(queue);
+            fail("Expected JMSException");
+        } catch (Exception e) {
+            assertEquals("User jdoe is not authorized to write to: queue://TEST.FOOOO",e.getMessage());
+            return;
         }
     }
 
